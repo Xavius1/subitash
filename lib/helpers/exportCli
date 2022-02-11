@@ -1,0 +1,20 @@
+#!/bin/bash
+source "$SUBITASH_ROOT"/lib/helpers/getOs
+source "$SUBITASH_ROOT"/lib/helpers/loadStuff
+
+function exportCli() {
+  OS=$(getOs)
+  ROOT="$SUBITASH_ROOT"
+  case "$OS" in
+    mac)      
+      loadStuff "source ${ROOT}/lib/cli"
+      loadStuff "source ${ROOT}/env"
+      ;;
+    linux)      
+      loadStuff "source ${ROOT}/lib/cli"
+      loadStuff "source ${ROOT}/env"
+      ;;
+  *)
+    echo Don\'t how to load cli on ${OS}
+  esac
+}

@@ -1,0 +1,33 @@
+#!/bin/sh
+source "$SUBITASH_ROOT"/lib/helpers/mapBranch
+
+function checkoutBranch() {
+  echo checkoutBranch "$@"
+  BRANCH="$1"
+  echo "$(pwd)"
+  if test "$BRANCH" = "$(git symbolic-ref --short HEAD)"; then
+    : "$1" is already on "$BRANCH"
+  else
+    if [[ `git status --porcelain` ]]; then
+      echo "NEED_COMMIT_BEFORE"
+      exit
+    fi
+    #Update local tracking branches
+    git pull --all
+    # Check if branch already exists
+    ORIGIN=$(mapBranch $BRANCH)
+    if [ ! -z "$(git rev-parse --quiet --verify $BRANCH)" ]; then
+      git checkout $BRANCH
+      git pull origin $BRANCH
+    elif [ ! -z "$(git rev-parse --quiet --verify origin/$BRANCH)" ]; then
+      git checkout -b $BRANCH origin/$BRANCH
+      git pull origin $BRANCH
+    elif [ ! -z "$(git rev-parse --quiet --verify $ORIGIN)" ]; then
+      git checkout -b $BRANCH $ORIGIN
+    elif [ ! -z "$(git rev-parse --quiet --verify origin/$ORIGIN)" ]; then
+      git checkout -b $BRANCH origin/$ORIGIN
+    else 
+      echo Error: branch ${ORIGIN} does not exsists, can\'t use it as origin branch for ${BRANCH}
+    fi
+  fi
+}

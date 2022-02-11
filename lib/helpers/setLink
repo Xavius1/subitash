@@ -1,0 +1,12 @@
+#!/bin/bash
+source "$SUBITASH_ROOT"/lib/helpers/getDevRoot
+source "$SUBITASH_ROOT"/lib/helpers/getTaskRoot
+
+function setLink() {
+  TASK_ID="$1"
+  REPO="$2"
+  if [ -L ./"$1" ]; then
+    unlink "$(getDevRoot)"/"$REPO"
+  fi
+  ln -s "$(getTaskRoot $TASK_ID)"/"$1" "$(getDevRoot)"/"$REPO"
+}

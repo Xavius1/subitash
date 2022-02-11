@@ -1,0 +1,28 @@
+{
+  "name": "subitash",
+  "version": "0.1.0",
+  "description": "CLI Tasks manager in a micro services world",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "update-tash-settings": "./bin/updateTashSettings",
+    "get-tash-settings": "./bin/getTashSettings"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Xavius1/subitash.git"
+  },
+  "author": "Xavius",
+  "license": "EUPL-1.2",
+  "bugs": {
+    "url": "https://github.com/Xavius1/subitash/issues"
+  },
+  "homepage": "https://github.com/Xavius1/subitash#readme",
+  "dependencies": {
+    "get-value": "^3.0.1",
+    "meta": "^2.2.25"
+  }
+}

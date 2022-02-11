@@ -1,0 +1,23 @@
+#!/bin/bash
+
+function mapBranch() {
+  case "$1" in
+    feat*)
+      echo develop
+    ;;
+    fix*)
+      echo develop
+    ;;
+    hotfix*)
+      echo master
+    ;;
+    release*)
+      echo master
+    ;;
+    develop)
+      echo master
+    ;;
+    *)
+      echo develop
+  esac
+}

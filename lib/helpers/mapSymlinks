@@ -1,0 +1,11 @@
+#!/bin/bash 
+source "$SUBITASH_ROOT"/lib/helpers/getTaskRoot
+source "$SUBITASH_ROOT"/lib/helpers/setLink
+
+function mapSymlinks() {
+  ROOT=$(getTaskRoot $1)/*
+  echo ${ROOT}
+  for f in $ROOT ; do [ -d "$f" ] && $(setLink $1 ${f##*/}); done
+}
+
+mapSymlinks $@

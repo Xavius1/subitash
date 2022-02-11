@@ -1,0 +1,20 @@
+#!/bin/bash
+
+source "$SUBITASH_ROOT"/lib/helpers/getOs
+source "$SUBITASH_ROOT"/lib/helpers/loadStuff
+
+function exportVscode() {
+  OS=$(getOs)
+  case "$OS" in
+    mac)
+      if [ -d "/Applications/Visual Studio Code.app/" ]; then
+        loadStuff "export PATH=\"$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin\""
+      else
+        echo /!\\ VSCode need to be installed before Subitash
+        exit
+      fi
+    ;;
+    *)
+      echo Don\'t know where to export vscode on ${OS}
+  esac
+}

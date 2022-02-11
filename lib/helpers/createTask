@@ -1,0 +1,44 @@
+#!/bin/bash
+# source "$SUBITASH_ROOT"/lib/helpers/createWorkspace
+source "$SUBITASH_ROOT"/lib/helpers/ensureFolder
+source "$SUBITASH_ROOT"/lib/helpers/getTaskRoot
+
+function createTask() {
+  case "$1" in
+    feat)
+      TYPE="$1"
+    ;;
+    fix)
+      TYPE="$1"
+    ;;
+    hotfix)
+      TYPE="$1"
+    ;;
+    *)
+      echo Your new task need to be one these : feat, fix or hotfix
+      exit
+  esac
+  shift
+
+  if [ ! -z "$1" ]; then
+    echo Create new "$1"
+  else
+    echo You need to define your task id
+    exit
+  fi
+
+  TASK_ROOT=$(getTaskRoot)/"$1"
+  ensureFolder "$TASK_ROOT"
+  cp "$SUBITASH_ROOT"/lib/templates/tash "$TASK_ROOT"/.tash
+  # createWorkspace "$1"
+  cd "$TASK_ROOT"
+  npm run update-tash-settings "$1" id "$1"
+  npm run update-tash-settings "$1" type "$TYPE"
+  BRANCH_NAME="$TYPE"-"$1"
+  if [ ! -z "$2" ]; then
+    BRANCH_NAME="$TYPE"-"$1"-"$2"
+  fi
+  npm run update-tash-settings "$1" branch "$BRANCH_NAME"
+  META=$(meta init)
+  code . -r
+}

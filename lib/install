@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#
+# /!\ Execute this file from the subitash root directory
+#
+
+SUBITASH_ROOT="$(pwd)"
+
+source "$SUBITASH_ROOT"/lib/helpers/copySample
+source "$SUBITASH_ROOT"/lib/helpers/ensureFolder
+source "$SUBITASH_ROOT"/lib/helpers/loadStuff
+source "$SUBITASH_ROOT"/lib/helpers/exportCli
+source "$SUBITASH_ROOT"/lib/helpers/exportEnvVars
+source "$SUBITASH_ROOT"/lib/helpers/exportVscode
+
+# We need vscode cli
+exportVscode
+# Define env vars
+exportEnvVars
+# Save subitash cli
+exportCli
+
+# Create tasks folder
+ensureFolder "$SUBITASH_ROOT"/tasks
+
+# Copy files
+copySample env
+
+# Install node dependencies
+npm ci

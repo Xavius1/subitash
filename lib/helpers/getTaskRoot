@@ -1,0 +1,10 @@
+#!/bin/bash
+
+function getTaskRoot() {
+  ROOT=${SUBITASH_ROOT}/tasks
+  if [ ! -z "$1" ]; then
+    echo "$ROOT"/"$1"
+  else
+    echo "$ROOT"
+  fi
+}

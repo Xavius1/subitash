@@ -1,0 +1,22 @@
+#!/bin/bash
+source "$SUBITASH_ROOT"/lib/helpers/getOs
+source "$SUBITASH_ROOT"/lib/helpers/getDevRoot
+source "$SUBITASH_ROOT"/lib/helpers/loadStuff
+
+function exportEnvVars() {
+  OS=$(getOs)
+  ROOT=$SUBITASH_ROOT
+  DEVROOT=$(getDevRoot)
+  case "$OS" in
+    mac)      
+      loadStuff "export SUBITASH_ROOT=${ROOT}"
+      loadStuff "export SUBITASH_DEV_ROOT=${DEVROOT}"
+      ;;
+    linux)      
+      loadStuff "export SUBITASH_ROOT=${ROOT}"
+      loadStuff "export SUBITASH_DEV_ROOT=${DEVROOT}/.."
+      ;;
+  *)
+    echo Don\'t know how to load env vars on ${OS}
+  esac
+}

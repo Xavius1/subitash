@@ -1,0 +1,7 @@
+#!/bin/bash
+
+function checkEnv() {
+  if [ -z "$1" ]; then
+    echo Error: Missong env var \""$1"\", you need to edit subitash/env file
+  fi
+}

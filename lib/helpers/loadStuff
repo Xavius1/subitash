@@ -1,0 +1,24 @@
+#!/bin/bash
+
+function loadStuff() {
+  loadStuffBash "$1"
+  loadStuffZsh "$1"
+}
+
+function loadStuffBash() {
+  stuff="$1"
+  if ! grep -q "$stuff" ~/.bashrc
+  then
+      echo "${stuff}" >> ~/.bashrc
+  fi
+}
+
+function loadStuffZsh() {
+  stuff="$1"
+  if [ -f ~/.zshrc ]; then
+    if ! grep -q "$stuff" ~/.zshrc
+    then
+        echo "${stuff}" >> ~/.zshrc
+    fi
+  fi
+}

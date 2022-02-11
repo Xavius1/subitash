@@ -1,0 +1,7 @@
+#!/bin/bash
+
+function copySample() {
+  if [ ! -f "$1" ]; then
+    cp ./"$1".sample ./"$1"
+  fi
+}

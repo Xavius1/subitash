@@ -1,0 +1,118 @@
+#!/bin/bash
+source "$SUBITASH_ROOT"/lib/helpers/checkEnv
+
+function subitash() {
+  ACTION="$1"
+  shift
+  case "$ACTION" in
+    new)      
+      source "$SUBITASH_ROOT"/lib/helpers/createTask
+      createTask "$@"
+      ;;
+    map)
+      TASK_ID="$1"
+      source "$SUBITASH_ROOT"/lib/helpers/mapSymlinks
+      mapSymlinks $TASK_ID
+      ;;
+    cd)
+      source "$SUBITASH_ROOT"/lib/helpers/getTaskRoot
+      cd "$(getTaskRoot $1)"
+      ;;
+    ide)
+      subitash cd "$1"
+      tash ide "$1"
+      ;;
+    switch)
+      source "$SUBITASH_ROOT"/lib/helpers/getTaskRoot
+      TASK_FOLDER="$(getTaskRoot $1)"
+      if [ -d "$TASK_FOLDER" ]; then
+        subitash map "$1"
+        cd "$(getTaskRoot $1)"
+      else
+        subitash new "$1"
+      fi
+      ;;
+    *)
+      source "$SUBITASH_ROOT"/lib/helpers/getTaskRoot
+      cd "$(getTaskRoot)"/"$ACTION"
+  esac
+}
+
+function tash() {
+  if [ ! -f ./.tash ]; then
+    echo You need to be in a task folder to execute tash command
+  else 
+    ACTION="$1"
+    shift
+    case "$ACTION" in
+      need)
+        REPO="$1"
+        if [ ! -d ./"$REPO" ]; then
+          echo "Repository not found, so we clone it..."
+          checkEnv "$SUBITASH_DEFAULT_REPO"
+          REPO_URL="$SUBITASH_DEFAULT_REPO"/"$REPO".git
+          if [ ! -z $2 ]; then
+            REPO_URL="$2"
+          fi
+          meta project import "$REPO" "$REPO_URL" && \
+          tash "$ACTION" "$@"
+        else
+          source "$SUBITASH_ROOT"/lib/helpers/getCurrentFolder
+          source "$SUBITASH_ROOT"/lib/helpers/checkoutBranch
+          source "$SUBITASH_ROOT"/lib/helpers/getTaskRoot
+          source "$SUBITASH_ROOT"/lib/helpers/getTashSettings
+          TASK_ID=$(getCurrentFolder)
+          BRANCH=$(getTashSettings "$TASK_ID" branch)
+          echo Move to "$TASK_ID" "$BRANCH" branch
+          cd ./"$REPO"
+          CHECKOUT=$(checkoutBranch $BRANCH)
+          if test "$BRANCH" = NEED_COMMIT_BEFORE; then
+            echo Error: "$1" have uncommited files.
+          fi
+
+          if [ -f ./package-lock.json ]; then
+            npm ci
+          elif [ -f ./yarn.lock ]; then
+            yarn
+          else
+            npm install
+          fi
+
+          source "$SUBITASH_ROOT"/lib/helpers/setLink
+          cd "$(getTaskRoot $TASK_ID)"
+          setLink "$TASK_ID" "$REPO"
+        fi
+        ;;
+      ide)
+        code . -r
+        ;;
+      exec)
+        meta exec "$@"
+        ;;
+      push)
+        source "$SUBITASH_ROOT"/lib/helpers/getTashSettings
+        BRANCH=$(getTashSettings "$TASK_ID" branch)
+        meta exec "git push origin $BRANCH"
+        ;;
+      commit)
+        MESSAGE="$1"
+        if [ -z "$MESSAGE" ]; then
+          echo "Missing commit message"
+        else
+          source "$SUBITASH_ROOT"/lib/helpers/getCurrentFolder
+          source "$SUBITASH_ROOT"/lib/helpers/getTashSettings
+          TASK_ID=$(getCurrentFolder)
+          TYPE=$(getTashSettings "$TASK_ID" type)
+          BRANCH=$(getTashSettings "$TASK_ID" branch)
+          tash exec "git add ."
+          tash exec "git commit -m \"$TYPE($TASK_ID): $MESSAGE\""
+          if [ ! -z "$2" ]; then
+            tash push
+          fi
+        fi
+        ;;
+      *)
+        tash exec "git ${ACTION} ${@}"
+    esac
+  fi
+}

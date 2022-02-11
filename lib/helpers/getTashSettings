@@ -1,0 +1,5 @@
+#!/bin/bash
+
+function getTashSettings() {
+  echo $(npm run get-tash-settings "$1" "$2" | awk 'NR>4')
+}
