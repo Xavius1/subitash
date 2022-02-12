@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Xavius1/subitash#readme",
   "dependencies": {
+    "dxslib": "bitbucket:officeriders2/dxslib#develop",
     "get-value": "^3.0.1",
     "meta": "^2.2.25"
   }
